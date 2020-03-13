@@ -74,12 +74,15 @@ namespace OnlineTitleSearch.Controllers
                                         select d).ToList();
 
                 Domain domain;
+                string domainTitle = x[i].Substring(headerStartIndex, headerLength);
+                domainTitle = HttpUtility.HtmlDecode(domainTitle);
+
                 if (domains.Count == 0)
                 {
                     domain = new Domain
                     {
                         DomainUrl = x[i].Substring(startIndex, length),
-                        DomainTitle = x[i].Substring(headerStartIndex, headerLength)
+                        DomainTitle = domainTitle
                     };
 
                     db.Domains.Add(domain);

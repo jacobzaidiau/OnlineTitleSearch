@@ -4,24 +4,16 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>"Online Title Search"</h2>
+<h4>@Model.First().Search.SearchDate.ToString()</h4>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.ResultIndex)
+            Index
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Domain.DomainUrl)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Domain.DomainTitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Search.SearchDate)
+            Website
         </th>
         <th></th>
     </tr>
@@ -32,18 +24,7 @@
         @Html.DisplayFor(modelItem => item.ResultIndex)
     </td>
     <td>
-        @Html.DisplayFor(modelItem => item.Domain.DomainUrl)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Domain.DomainTitle)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Search.SearchDate)
-    </td>
-    <td>
-        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        <a href="@Html.DisplayFor(modelItem => item.Domain.DomainUrl)">@Html.DisplayFor(modelItem => item.Domain.DomainTitle)</a>
     </td>
 </tr>
 }
