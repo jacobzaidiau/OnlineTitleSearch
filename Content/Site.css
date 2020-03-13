@@ -3,6 +3,47 @@
     padding-bottom: 20px;
 }
 
+#tblFooter {
+    margin: 0 auto;
+}
+
+footer {
+    background: #2e2e2e;
+}
+
+td.footerPadRight {
+    padding-right: 30px;
+    text-align: left;
+}
+
+
+
+footer th {
+    text-align: left;
+    padding-bottom: 20px;
+    color: #ffffff
+}
+
+
+footer a {
+    color: #acaeaf;
+    text-decoration: none;
+    transition: all .3s ease-in-out 0s;
+    transition-property: all;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-in-out;
+    transition-delay: 0s;
+}
+
+    footer a:hover {
+        color: #ffffff;
+    }
+
+
+
+
+
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
