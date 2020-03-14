@@ -17,11 +17,23 @@ namespace OnlineTitleSearch.Controllers
         // GET: Result
         public ActionResult Index()
         {
-            string url = $"https://www.google.com/search?q=online+title+search&num=100";
+            string searchText = "Online title search";
+
+            // if we were to pass the search string as an input, we would need to
+            // handle the special characters using UrlEncode.
+
+            searchText = HttpUtility.UrlEncode(searchText).ToLower().Replace(' ', '+');
+            string url = $"https://www.google.com/search?q={searchText}&num=100";
+
+            // providing the necessary information to the HttpWebRequest in order to generate a friendly response
+            // If an employee knew the CEO's computer, choice of browser, etc, this would be the right place to add
+            // this information in.
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.UserAgent = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36";
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            // Retrieve the data and insert it into the data variable.
 
             string data = "";
 
@@ -42,6 +54,9 @@ namespace OnlineTitleSearch.Controllers
             }
 
             var x = data.Split(new string[] { "<div class=\"g\">" }, StringSplitOptions.None);
+
+            // Add the unique search to the table
+            // Do not check if it exists already
 
             Search search = new Search
             {
@@ -68,14 +83,18 @@ namespace OnlineTitleSearch.Controllers
                 headerStartIndex += headerLength;
                 headerLength = x[i].Substring(headerStartIndex).IndexOf("</h3>");
 
+                
+
+                // Check if the domain is already in the database, and if not add it.
+                
+                Domain domain;
+                string domainTitle = x[i].Substring(headerStartIndex, headerLength);
+                domainTitle = HttpUtility.HtmlDecode(domainTitle);
+
                 string domainUrl = x[i].Substring(startIndex, length);
                 List<Domain> domains = (from d in db.Domains
                                         where d.DomainUrl == domainUrl
                                         select d).ToList();
-
-                Domain domain;
-                string domainTitle = x[i].Substring(headerStartIndex, headerLength);
-                domainTitle = HttpUtility.HtmlDecode(domainTitle);
 
                 if (domains.Count == 0)
                 {
@@ -92,6 +111,8 @@ namespace OnlineTitleSearch.Controllers
                 {
                     domain = domains.First();
                 }
+
+                // Add the result bridge table to the database
 
                 db.Results.Add(new Result
                 {
