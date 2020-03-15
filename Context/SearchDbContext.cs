@@ -9,18 +9,10 @@ namespace OnlineTitleSearch.Context
 {
     public class SearchDbContext : DbContext
     {
-
-        public SearchDbContext():base()
-        {
-            Database.SetInitializer<SearchDbContext>(null);
-
-        }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
         }
-
 
         public DbSet<Search> Searches { get; set; }
         public DbSet<Domain> Domains { get; set; }

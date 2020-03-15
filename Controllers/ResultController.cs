@@ -63,7 +63,6 @@ namespace OnlineTitleSearch.Controllers
 
             Search search = new Search { SearchDate = DateTime.Now };
             db.Searches.Add(search);
-            db.SaveChanges();
 
             for (int i = 1; i < x.Length; i++)
             {
@@ -97,7 +96,6 @@ namespace OnlineTitleSearch.Controllers
                     };
 
                     db.Domains.Add(domain);
-                    db.SaveChanges();
                 }
                 else
                 {
@@ -115,6 +113,8 @@ namespace OnlineTitleSearch.Controllers
 
                 db.SaveChanges();
             }
+
+            
 
             // Only select the result of the current search, 
             // and only select InfoTrack domains 
