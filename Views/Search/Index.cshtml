@@ -4,33 +4,34 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Searches</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<p>@Html.ActionLink("Create New Search", "Index", "Result", null, null)</p>
 <table class="table">
     <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SearchId)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.SearchDate)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.SearchDate)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.SearchDate)
-    </td>
-    <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.SearchId }) |
-        @Html.ActionLink("Details", "Details", new { id = item.SearchId }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.SearchId })
-    </td>
-</tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SearchId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SearchDate)
+            </td>
+            <td>
+                @Html.ActionLink("Results", "Details", "Result", new { id = item.SearchId }, null) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.SearchId })
+            </td>
+        </tr>
+    }
 
 </table>
