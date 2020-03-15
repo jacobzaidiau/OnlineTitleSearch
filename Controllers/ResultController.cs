@@ -34,13 +34,13 @@ namespace OnlineTitleSearch.Controllers
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
             // Retrieve the data and insert it into the data variable.
+            // And return nothing if unable to retrieve a response from Google
 
             string data = "";
-
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 Stream receiveStream = response.GetResponseStream();
-                StreamReader readStream = null;
+                StreamReader readStream;
 
                 if (String.IsNullOrWhiteSpace(response.CharacterSet))
                     readStream = new StreamReader(receiveStream);
@@ -52,41 +52,33 @@ namespace OnlineTitleSearch.Controllers
                 response.Close();
                 readStream.Close();
             }
+            else { return View(); }
 
+
+            // with the User Agent chosen, all results are seperated by <div class="g">
             var x = data.Split(new string[] { "<div class=\"g\">" }, StringSplitOptions.None);
 
             // Add the unique search to the table
             // Do not check if it exists already
 
-            Search search = new Search
-            {
-                SearchDate = DateTime.Now
-            };
-
+            Search search = new Search { SearchDate = DateTime.Now };
             db.Searches.Add(search);
-
             db.SaveChanges();
 
             for (int i = 1; i < x.Length; i++)
             {
-                Console.WriteLine(i.ToString());
-                //Console.WriteLine("\n\n\n");
-
-
+                // parse the URL between <a href=" and "\>
                 int startIndex = x[i].IndexOf("<a href=\"") + 9;
                 int length = x[i].Substring(startIndex).IndexOf("\"");
 
-
+                // parse the domain between <h3 ...> and </h3>
                 int headerStartIndex = x[i].IndexOf("<h3") + 3;
                 int headerLength = x[i].Substring(headerStartIndex).IndexOf(">") + 1;
-
                 headerStartIndex += headerLength;
+
                 headerLength = x[i].Substring(headerStartIndex).IndexOf("</h3>");
 
-                
-
                 // Check if the domain is already in the database, and if not add it.
-                
                 Domain domain;
                 string domainTitle = x[i].Substring(headerStartIndex, headerLength);
                 domainTitle = HttpUtility.HtmlDecode(domainTitle);
@@ -113,7 +105,7 @@ namespace OnlineTitleSearch.Controllers
                 }
 
                 // Add the result bridge table to the database
-
+                // we could limit the domains to InfoTrack here
                 db.Results.Add(new Result
                 {
                     SearchId = search.SearchId,
@@ -126,17 +118,36 @@ namespace OnlineTitleSearch.Controllers
 
             // Only select the result of the current search, 
             // and only select InfoTrack domains 
-
             return View(db.Results.Where(
                 y => y.SearchId == search.SearchId
-            && y.Domain.DomainUrl.StartsWith("https://www.infotrack.com.au/"))
+                && y.Domain.DomainUrl.StartsWith("https://www.infotrack.com.au/"))
                 .OrderBy(z => z.ResultIndex).ToList());
         }
 
         // GET: Result/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            List<Result> results = (from x in db.Results
+                           join s in db.Searches on x.SearchId equals s.SearchId
+                           join d in db.Domains on x.DomainId equals d.DomainId
+                           where x.SearchId == id && d.DomainUrl.StartsWith("https://www.infotrack.com.au")
+                           select new
+                           {
+                               SearchId = x.SearchId,
+                               Search = s,
+                               DomainId = x.DomainId,
+                               Domain = d,
+                               ResultIndex = x.ResultIndex
+                           }).ToList().Select(x => new Result {
+                               SearchId = x.SearchId,
+                               Search = x.Search,
+                               DomainId = x.DomainId,
+                               Domain = x.Domain,
+                               ResultIndex = x.ResultIndex
+                           }).ToList();
+
+
+            return View("Index", results);
         }
 
         // GET: Result/Create
