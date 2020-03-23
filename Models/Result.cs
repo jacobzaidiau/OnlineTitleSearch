@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineTitleSearch.IModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +8,7 @@ using System.Web;
 
 namespace OnlineTitleSearch.Models
 {
-    public class Result
+    public class Result : IResult
     {
         public Search Search { get; set; }
         public Domain Domain { get; set; }
